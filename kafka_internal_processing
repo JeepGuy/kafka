@@ -1,0 +1,69 @@
+Kafka efficiency and processing
+===============================
+
+- Achieves high throughput and low latency using commit log
+  -- which is optimized using page cache
+  --- on Linux done via a kernel part using an optimized process for
+      transferring the data out via a socket (sendFile)
+
+- Zero Copy I/O using sendFile (Java NIO)
+  -- Linux sendFile
+  -- Heavily relies on Linux pageCache
+
+  --- Whenever data is put into a topic the data is put in pageCache and
+      again when it is retrieved it is being pulled from pageCache.
+       which is handled by sendFile = very efficient.
+
+ In a normal scenario the common data path for transfer of data from file to socket
+ there are at least four copies made of this data and at least two system calls.
+  -- using sendFile this copying is avoided
+     --- allows the OS to send the data from pageCache to the network directly
+     Therefore using sendFile only the final copy to the NAC buffer is needed
+     (Network Interface Card)
+     (SendFile uses the Java New IO ~NIO)
+     ~ the data is only copied once and on each consumption it is read from page cache
+       as opposed to being stored in memory and being copied out to kernel space
+       every time it is read.
+       > allows the messages to be consumed at about the rate of the network
+         connection.
+
+
+- Data compression
+  Kafka allows recursive message sets
+   batches of messages can be "clumped" together and send to the server in
+   compressed form, will be processed and remain in the log in compressed form
+   and will only be decompressed by the consumer.
+
+Kafka support CZ and Snappy compression protocol.
+
+JMS / Standard messaging verses Kafka.
+-------------------------------------
+
+- Have no concept of a Queue, to P2P (peer to peer) model, only pub-sub.
+- Message persistence: Uses common storage and is deleted after read.
+  whereas Kafka has a retention period (set in configs).
+
+REVIEW:
+
+Topic partitioning:
+ - Partitions for the same topic are distributes across multiple brokers in the cluster.
+ - Partitions are replicated across multiple servers:
+    number of replicas is a configurable parameter.
+ - Each partition has one server as a leader and a number of servers as followers.
+ - Each server acts as a leader for some of it partitions and as a follower for
+   some other partitions.
+ - The producers are responsible for choosing which message to assign to which
+   partition within the topic based on the key assigned to the message.
+
+Message Reads:
+  - The consumers of the message in Kafka issues a fetch request to the broker
+  leading the partition it wants to consume.
+  - As part of the fetch, consumer specifies the offset from which the message
+  in the log is read from.
+    FIFO in other hand - consumers can re-read the messages again.
+    Ordering ensured by consumer groups.
+
+
+
+
+...

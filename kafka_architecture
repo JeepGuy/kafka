@@ -1,0 +1,92 @@
+Kafka Architecture
+==================
+Core components:
+
+Producers publish message to topics in a broker = write data to brokers
+---------
+
+Consumers subscribe to topics in a broker = read data from brokers
+---------
+
+Kafka cluster is a set of servers, each of which is called a Broker.
+-------------
+
+Zookeeper: the configuration /registry of the cluster.
+---------
+- Maintains the state of the Kafka cluster.
+
+Topics:  Data is stored in Topics, which are held by brokers
+------- a stream of messages belonging to a particular category.
+
+ Each topic is split into multiple partitions which are replicated across
+ the cluster.
+ For each Topic Kafka keeps a minimum of one partition
+ Each topic keeps messages in an immutable ordered sequence.
+
+A partition is a group of files of equal sizes.
+------------
+
+Consumers reads messages from one or more topics
+ - Consume the data by pulling the messages from the brokers.
+
+ Message Reads:
+  - The consumers of the message in Kafka issues a fetch request to the broker
+  leading the partition it wants to consume.
+  - As part of the fetch, consumer specifies the offset from which the message
+  in the log is read from.
+    FIFO in other hand - consumers can re-read the messages again.
+    Ordering ensured by consumer groups.
+
+
+
+Kafka clusters usually comprise of multiple brokers for load balancing.
+ Kafka servers do no maintain their own state,
+ Zookeeper Servers maintain the state of the cluster (brokers - whether one is down etc).
+ - The data is persistent because it is not deleted after it is read by the consumers,
+ so it can be read at will multiple times (based on the offset)
+
+Each Kafka broker (node) can handle hundreds of thousands of reads and write per second and
+and terabytes of messages without any impact.
+ - Can handle multiple topics spread over multiple partitions.
+
+Process:
+========
+Producers contact Zookeeper and perform a handshake to get the location of the topics in
+the correct broker and partition.
+
+Producers do an Event push (data push) to the correct Kafka Broker
+
+Zookeeper performs the coordination of message traffic between brokers based on
+the state of the cluster and location of the topics.
+
+Consumers keep of record of the message topic offset (location) and watch the cluster for events.
+
+
+
+Zookeeper
+---------
+ provides an infrastructure for cross node synchronization and can be used by applications
+  to ensure that the tasks across the cluster can be serialized  or synchronized
+  (be tracked and maintained.)
+ A centralized service maintaining configuration in
+ in distributed synchronization and provides group services.
+ - Kafka brokers coordinate with Zookeeper
+ - Failure of a broker is notified by Zookeeper
+ - Publishes/Consumers can interact with ZK to identify the lead broker of a topic.
+ - Leaders and Followers are elected by Zookeepers.
+
+Producers always write to a single lead brokers, which provide for load balancing
+~ so that each write can serviced by a separate machine.
+the followers passively replicate the messages.
+topic messages from the leader (Data is synch'd)   - data is passively put on the followers.
+ - So the the leader fails the followers become the leader.
+ - one server can act as a leader for some topics and a follower for other topics.
+ -- so the load is balanced.
+
+Anatomy of a Topic -see Topic notes in repo.
+
+
+
+
+
+.....

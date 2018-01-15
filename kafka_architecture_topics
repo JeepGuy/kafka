@@ -1,0 +1,78 @@
+Kafka Architecture: Topics
+==========================
+
+Anatomy of a Topic
+
+- Partition is a sequence of records
+   the kafka maintains a partition log.
+- Commit log: appended messages
+- Every Record has a unique id called an offset
+   - the records in the partitions are each assigned a sequential id the records
+     each record uniquely in the partition.
+- Consumer can consume records/messages in any order or older records on demand.
+  -- Consumer can reset to older offset,
+      or go ahead and consume current records
+- Distributed: partitions are replicated for fault tolerance
+- Partition of the topic leads to its high throughput
+  and parallelism.
+
+  <see diagram in kafka docs>
+
+Topics - Producers and Consumers
+--------------------------------
+
+Consumers us an "offset pointer" to track / control their read progress on a topic
+  - and decide the pace of consumption.
+
+Consumer Group Name: Consumers label themselves with a group name create groups to track their progress
+ - the only meta data contained by the consumers is the "offset"
+  or the position of the consumer in the logs
+  -- the offset is controlled by the consumer
+- Consumers "pull" the messages hence they need to keep track of them.
+
+Producers always append to the "tail" of a topic
+ - think append to a file.
+
+ Topic partitioning:
+  The producers are responsible for choosing which message to assign to which partition
+  within the topic based on the key assigned to the message.
+
+
+The Kafka Cluster
+=================
+
+Messages can written to any partition of a topic and they can be consumed parellelly
+by the consumers.
+
+Consumer Groups
+===============
+
+A subscriber is a cluster of consumers instead os a single process.
+
+Method: The consumer group divides up the partitions in the logs over the consumers instance
+so that each is an exclusive consumer of a (fade ? failed) share of the partitions at any point in time.
+
+Process of maintaining the membership in a group is handled by the Kafka protocol dynamically.
+ - If new instances (brokers) join the group  they will take care of some more partitions
+ from other members of the group
+ and if an instance dies its partitions will be distributed among the remaining members of the group.
+  Does not match the diagram in the slide.
+Multi scriber.
+
+Replication
+===========
+
+Partitions replicate the data across the nodes (brokers)
+
+Method: Producers send the message to the Leader partition (on a specific broker)
+ for either push or pull of message there is a synchronization with other brokers.
+ - if broker 1 goes down... Zookeeper assigns a new leader and tells the producers
+ and consumers to interact with the new leader.
+
+
+
+
+
+
+
+.....
