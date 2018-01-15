@@ -1,0 +1,53 @@
+
+Introduction:
+
+My words based on lecture.
+kafka is a messaging system designed to replace the cumbersome point-to-point communication protocols,
+star (hub  and spoke networks), and MESH networks for message queue communications.
+Those message systems that require centralized message routing, control, etc.
+They are tightly coupled systems...
+
+Offical description:
+Kafka is a distributed messaging sytem providing fast, highly available scalable
+and redundant messaging system through a pub-sub (Publish - Subscribe) model,
+
+Kafka as a messaging, storing and streaming messaging system is a powerful scalable
+streaming platform, allows processing, storing, and streaming applications and streaming
+data pipeplines.
+Enables:
+Publish and Subscribe: to stream of data like a messaging system.
+Process:  streams of data efficiently and in real time.
+Store: streams of data safely in a distributed replicated cluster.
+
+By storing and processing the data applications can treat past present (and future)
+data in the same way.
+
+
+This is a somewhat passive system that allows producers to push messages to the kafka
+database and consumers to pull from those messages at will.
+- The data is persistent because it is not deleted after it is read by the consumers,
+so it can be read at will multiple times (based on the offset).
+Kafka is a loosely coupled system = message oriented system... and scalable.
+
+Kafka is a distributed multi-component architecture that is known as a Publish-Subscribe
+messaging pattern / System.
+-These systems have more than one publisher and more than one subscriber to "topics"
+and often has more than one queue manager.
+This is a topic based system.
+
+The topic is the focus publishers and subscribers can be ignorant of each other.
+ - The possible problems or disadvantages:
+   message delivery issues,
+   inability to search for records,
+
+Questions (Quiz)
+What is the need of a messaging model
+What is the plush subscrive model
+What is Kafka.
+
+
+
+
+
+
+...
